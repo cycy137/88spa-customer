@@ -39,7 +39,7 @@ export default function Reviews() {
           <h2 className="text-3xl sm:text-5xl font-serif font-light tracking-tight mb-4">
             Loved by the Eastside
           </h2>
-          <p className="text-spa-soft/60 font-light text-sm tracking-wide">
+          <p className="text-spa-textMuted/70 font-light text-sm tracking-wide">
             Here is what our clients from Redmond and Bellevue say about their wellness journey.
           </p>
         </div>
@@ -49,7 +49,7 @@ export default function Reviews() {
           {testimonials.map((review) => (
             <div 
               key={review.id} 
-              className="bg-white/70 border border-spa-accent p-8 rounded-2xl flex flex-col justify-between backdrop-blur-sm shadow-sm hover:border-spa-gold/50 transition-all duration-300"
+              className="bg-spa-dark/40 border border-spa-emerald/30 p-8 rounded-2xl flex flex-col justify-between backdrop-blur-sm shadow-sm hover:border-spa-gold/30 transition-all duration-300"
             >
               <div>
                 {/* 5星图标渲染 */}
@@ -62,15 +62,15 @@ export default function Reviews() {
                 </div>
                 
                 {/* 评价主体文本 */}
-                <p className="text-sm font-light leading-relaxed text-spa-textDark/80 italic mb-6">
+                <p className="text-sm font-light leading-relaxed text-spa-soft/80 italic mb-6">
                   "{review.text}"
                 </p>
               </div>
 
               {/* 评价人落款 */}
-              <div className="border-t border-spa-accent/60 pt-4 flex justify-between items-center text-xs">
+              <div className="border-t border-spa-emerald/20 pt-4 flex justify-between items-center text-xs">
                 <span className="font-medium text-spa-gold tracking-wide">{review.name}</span>
-                <span className="text-spa-textMuted/60">{review.location}</span>
+                <span className="text-spa-soft/40">{review.location}</span>
               </div>
             </div>
           ))}
@@ -82,7 +82,7 @@ export default function Reviews() {
             href="https://g.page" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="inline-flex items-center text-xs font-semibold tracking-widest text-spa-gold uppercase hover:text-spa-brand transition-colors duration-300"
+            className="inline-flex items-center text-xs font-semibold tracking-widest text-spa-gold uppercase hover:text-spa-soft transition-colors duration-300"
           >
             Write a Google Review
             <svg className="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
