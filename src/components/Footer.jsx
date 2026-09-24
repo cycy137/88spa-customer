@@ -22,7 +22,7 @@ export default function Footer() {
             </div>
 
             {/* 营业时间与直联电话 */}
-            <div className="grid grid-cols-2 gap-6 text-sm border-t border-spa-emerald/20 pt-6">
+            <div className="grid grid-cols-2 gap-6 text-sm border-t border-spa-accent/60 pt-6">
               <div>
                 <h4 className="font-semibold text-spa-gold tracking-wider uppercase text-xs mb-3">Hours</h4>
                 <p className="font-light text-spa-textMuted/80">Mon - Sun</p>
@@ -54,10 +54,10 @@ export default function Footer() {
             </div>
 
             {/* 地图嵌入框：采用标准的高级静音无边框响应式 iframe 大图，未来可在此处替换为您精准的 Google Map 嵌入链接 */}
-            <div className="w-full h-64 bg-spa-emerald/5 rounded-2xl overflow-hidden border border-spa-emerald/20 shadow-inner">
+            <div className="w-full h-64 bg-spa-accent/20 rounded-2xl overflow-hidden border border-spa-accent shadow-inner">
               <iframe 
                 title="88spa Redmond Location"
-                src="https://google.com" 
+                src="https://www.google.com/maps?q=16720+Redmond+Way+%23C,+Redmond,+WA+98052&output=embed" 
                 className="w-full h-full border-0 filter grayscale opacity-80 contrast-125 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
                 allowFullScreen="" 
                 loading="lazy" 
@@ -69,7 +69,7 @@ export default function Footer() {
         </div>
 
         {/* 最底部版权声明线 */}
-        <div className="border-t border-spa-emerald/20 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-spa-textMuted/40 tracking-wider">
+        <div className="border-t border-spa-accent/60 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-spa-textMuted/40 tracking-wider">
           <p>© {new Date().getFullYear()} 88 Head Spa & Massage. All rights reserved.</p>
           <p className="mt-2 sm:mt-0 font-light">Designed for Ultimate Rejuvenation</p>
         </div>
