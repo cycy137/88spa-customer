@@ -3,10 +3,13 @@ import React from 'react';
 // 🌟 核心：引入全局统一的英文文本转换 utility
 import { transformServiceData } from '../utils/serviceMapper';
  
-// 加购项配图映射：按 D1 服务名称匹配，图片存放在 public/image/ 下
-const ADDON_IMAGES = {
+// 促销卡片配图映射：按 D1 服务原名匹配，图片存放在 public/image/ 下
+const PROMO_IMAGES = {
   'Aromatherapy': '/image/addon-aromatherapy.webp',
   'Magnetic Therapy Lamp': '/image/addon-magnetic-lamp.webp',
+  'special脚90': '/image/promo-foot-90.webp',
+  'special脚80': '/image/promo-foot-80.webp',
+  'special脚70': '/image/promo-foot-70.webp',
 };
  
 /**
@@ -56,7 +59,7 @@ export default function SpecialPromo({ onBookNowClick, activeServices = [] }) {
             
             // 自动计算本次促销为您省下了多少美元
             const saving = item.price - (item.salePrice || item.price);
-            const addonImage = ADDON_IMAGES[item.name];
+            const promoImage = PROMO_IMAGES[item.name];
             
             return (
               <div 
@@ -66,11 +69,11 @@ export default function SpecialPromo({ onBookNowClick, activeServices = [] }) {
                 {/* 装饰条：卡片顶部/左侧的香槟金高光线 */}
                 <div className="absolute top-0 left-0 w-full sm:w-1.5 h-1.5 sm:h-full bg-spa-gold" />
  
-                {/* 加购项配图：有配图的卡片顶部通栏展示，手机和桌面都不会再挤压文字区 */}
-                {addonImage && (
+                {/* 促销卡片配图：有配图的卡片顶部通栏展示，手机和桌面都不会再挤压文字区 */}
+                {promoImage && (
                   <div className="w-full overflow-hidden flex-shrink-0">
                     <img
-                      src={addonImage}
+                      src={promoImage}
                       alt={displayName}
                       loading="lazy"
                       className="w-full h-48 sm:h-60 object-cover group-hover:scale-105 transition-transform duration-500"
@@ -112,7 +115,7 @@ export default function SpecialPromo({ onBookNowClick, activeServices = [] }) {
                       ${item.salePrice || item.price}
                     </div>
                   </div>
- 
+                  
                   <button
                     onClick={() => onBookNowClick(item)}
                     className="bg-spa-brand hover:bg-spa-brand/90 text-white font-medium px-6 py-3 rounded-xl text-sm tracking-wider transition-all duration-300 shadow-md group-hover:scale-[1.02] transform"
