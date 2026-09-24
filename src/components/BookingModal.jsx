@@ -6,6 +6,15 @@ import { transformServiceData } from '../utils/serviceMapper';
  * 官网高联动在线预约弹窗
  * 规则：电话核心必填，姓名/邮箱可选，过滤兼职技师，移除房间选择，支持多选 Add-ons 金额累加
  */
+
+// 当天日期（本地时区，格式 YYYY-MM-DD），用于预约日期默认值
+const todayStr = () => {
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${m}-${day}`;
+};
+
 export default function BookingModal({ isOpen, onClose, servicesList = [], staffList = [], selectedService, onSubmitAppointment }) {
   
   // 1. 初始化表单状态
@@ -15,7 +24,7 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
     customerEmail: '',     // Optional
     serviceId: '',         // 动态主项目联动
     staffId: '',           // 🌟 动态技师联动 (Optional)
-    appointmentDate: '',
+    appointmentDate: todayStr(), // 🌟 默认当天
     appointmentTime: '',
     notes: ''              // 备注
   });
@@ -45,6 +54,13 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
       setFormData(prev => ({ ...prev, serviceId: mainServices[0].id.toString() }));
     }
   }, [selectedService, servicesList, isOpen]);
+
+  // 🌟 预约日期默认当天：每次打开弹窗都重置为今天
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(prev => ({ ...prev, appointmentDate: todayStr() }));
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
