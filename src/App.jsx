@@ -7,6 +7,7 @@ import Services from './components/Services';
 import Reviews from './components/Reviews';
 import Footer from './components/Footer';
 import BookingModal from './components/BookingModal';
+import MobileBookingPopup from './components/MobileBookingPopup';
 import { useSeasonalTheme } from './hooks/useSeasonalTheme';
 import { fetchInitData, createAppointment } from './api/index';
 
@@ -66,6 +67,9 @@ export default function App() {
       </main>
       
       <Footer />
+
+      {/* 手机端进站预约弹窗：每天只弹一次，电脑端不显示；促销位预留在组件内部 */}
+      <MobileBookingPopup onBookNowClick={() => handleOpenBooking(null)} />
 
       <BookingModal 
         isOpen={isModalOpen}
