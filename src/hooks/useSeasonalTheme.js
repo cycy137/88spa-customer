@@ -6,23 +6,24 @@ const DEFAULT_SEASONAL_THEMES = {
   spring: {
     bg: '#f4f7f4',
     accent: '#e6ede6',
-    // 👈 核心：直接指向本地 public/images/ 里的图片（或者在线图床 URL）
-    bgImage: 'url("public/image/main.webp")'
+    // 👈 核心：public/ 下的文件构建后挂在网站根目录，网址里不带 public/，所以用 /image/... 开头
+    bgImage: 'url("/image/main.webp")'
   },
   summer: {
     bg: '#fbf9f6',
     accent: '#f3ece3',
-    bgImage: 'url("public/image/main.webp")'
+    bgImage: 'url("/image/main.webp")'
   },
   autumn: {
     bg: '#fcf8f2',
     accent: '#f5ebe0',
-    bgImage: 'url("public/image/main.webp")'
+    bgImage: 'url("/image/main.webp")'
   },
   winter: {
     bg: '#f5f7fa',
     accent: '#eaf0f6',
-    bgImage: 'url("https://unsplash.com")'
+    // 冬季暂时也用本地这张图，有合适的冬季图之后再换成真实图片地址
+    bgImage: 'url("/image/main.webp")'
   }
 };
 

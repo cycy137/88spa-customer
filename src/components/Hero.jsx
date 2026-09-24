@@ -20,7 +20,7 @@ export default function Hero({ onBookNowClick }) {
       {/* 🌟 核心修改 2：因为图片变清晰亮堂了，我们将主文字颜色改为高对比度的纯白 text-white */}
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
         
-        <p className="text-xs sm:text-sm font-medium tracking-[0.3em] text-spa-gold uppercase mb-6 drop-shadow-sm">
+        <p className="text-xs sm:text-sm font-medium tracking-[0.18em] sm:tracking-[0.3em] text-spa-gold uppercase mb-6 drop-shadow-sm">
           Premium Head Spa & Therapeutic Massage
         </p>
 
