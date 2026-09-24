@@ -141,8 +141,8 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
 
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-spa-textDark/60 backdrop-blur-sm animate-fade-in">
-      <div className="relative bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-spa-accent/50 p-6 sm:p-8 text-spa-textDark max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 overflow-y-auto flex p-4 bg-spa-textDark/60 backdrop-blur-sm animate-fade-in">
+      <div className="relative m-auto bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-spa-accent/50 p-6 sm:p-8 text-spa-textDark max-h-[90vh] overflow-y-auto">
         
         {/* 右上角关闭按钮 */}
         <button onClick={onClose} className="absolute top-5 right-5 text-spa-textMuted hover:text-spa-brand transition-colors">
@@ -172,14 +172,14 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
               <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Your Name (Optional)</label>
               <input
                 type="text" name="customerName" value={formData.customerName} onChange={handleChange} placeholder="e.g. Sarah J."
-                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors"
+                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base"
               />
             </div>
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Email (Optional)</label>
               <input
                 type="email" name="customerEmail" value={formData.customerEmail} onChange={handleChange} placeholder="sarah@example.com"
-                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors"
+                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base"
               />
             </div>
           </div>
@@ -230,14 +230,14 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
               <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Date *</label>
               <input
                 type="date" name="appointmentDate" required value={formData.appointmentDate} onChange={handleChange}
-                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-xs font-medium"
+                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base font-medium"
               />
             </div>
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Time *</label>
               <input
                 type="time" name="appointmentTime" required value={formData.appointmentTime} onChange={handleChange}
-                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-xs font-medium"
+                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base font-medium"
               />
             </div>
           </div>
@@ -268,14 +268,14 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
                           onChange={() => handleAddonToggle(addon.id)}
                           className="h-4 w-4 rounded border-spa-accent text-spa-brand focus:ring-spa-brand cursor-pointer"
                         />
-                        <div className="flex flex-col">
+                        <div className="flex flex-col min-w-0">
                           <span className="text-sm font-medium text-spa-textDark">{addon.name}</span>
                           <span className="text-[11px] text-spa-textMuted font-light">
                             {addon.id === 23 ? 'Pure therapeutic plant oils.' : 'Targeted localized deep-heat relief.'}
                           </span>
                         </div>
                       </div>
-                      <span className="text-sm font-semibold text-spa-brand">
+                      <span className="text-sm font-semibold text-spa-brand flex-shrink-0">
                         {promoPrice === 0 ? 'FREE' : `+\$${promoPrice}`}
                       </span>
                     </label>
@@ -296,7 +296,7 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
               value={formData.notes} 
               onChange={handleChange} 
               placeholder="Any specific skin allergies, sensitivities, or areas of high muscle tension we should know about?"
-              className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors resize-none text-xs leading-relaxed"
+              className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors resize-none text-base leading-relaxed"
             />
           </div>
 
