@@ -16,6 +16,7 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [targetService, setTargetService] = useState(null);
 
+  
   // 挂载季节性主题机制
   useSeasonalTheme(dbConfig?.themeConfig);
 
