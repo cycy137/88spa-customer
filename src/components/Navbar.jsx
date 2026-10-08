@@ -8,10 +8,9 @@ export default function Navbar({ onBookNowClick }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
-          {/* 左侧：店名 */}
-          <div className="flex-shrink-0 flex flex-col">
-            <span className="text-xl font-bold tracking-widest text-spa-brand">88 SPA</span>
-            <span className="text-[10px] tracking-wider text-spa-textMuted uppercase">Head Spa & Massage</span>
+          {/* 左侧：店 logo */}
+          <div className="flex-shrink-0">
+            <img src="/logo.png" alt="88 Head Spa & Massage" className="h-14 w-auto" />
           </div>
 
           {/* 中间：菜单导航 */}
