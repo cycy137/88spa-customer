@@ -18,19 +18,24 @@ const VOCABULARY = {
 export function transformServiceData(rawService) {
   const { name, duration, category } = rawService;
 
-  // 1. Exact Override Protection: Check if there's a custom promo or specific override name first
-  if (name.toLowerCase().includes('special')) {
-    // e.g., "special脚90" turns into "Limited Premium Foot Ritual (Special)"
-    const numericPart = name.replace(/[^0-9]/g, '');
+  // 是否真的是特价项目（以数据库标记为准，而不只是名字里带 special）
+  const isActuallySpecial = !!(rawService.isSpecial || rawService.salePrice);
+
+  // 1. 特价专属名称：只有数据库里标了特价的才走这里
+  if (name.toLowerCase().includes('special') && isActuallySpecial) {
+    // e.g., "special脚90" turns into "Premium Foot Reflexology Special"
     return {
       displayName: `Premium Foot Reflexology Special`,
       displaySubtitle: `Exclusive seasonal deep tissue & pressure point massage sequence.`
     };
   }
 
+  // 曾经是特价、现在已移回常规菜单的项目：去掉名字里的 special 前缀后按常规解析
+  const cleanName = name.replace(/special/i, '');
+
   // 2. Combo Package Parsing: If it contains a '+' sign, split and map each item
-  if (name.includes('+')) {
-    const parts = name.split('+'); // e.g., ["身体90", "脚30"]
+  if (cleanName.includes('+')) {
+    const parts = cleanName.split('+'); // e.g., ["身体90", "脚30"]
     const descriptiveNames = parts.map(part => {
       const cleanKeyword = part.replace(/[0-9]/g, '').trim(); // "身体"
       return VOCABULARY[cleanKeyword] || cleanKeyword;
@@ -42,8 +47,8 @@ export function transformServiceData(rawService) {
     };
   }
 
-  // 3. Single Service Parsing
-  const coreKeyword = name.replace(/[0-9]/g, '').trim(); // "头"
+  // 3. Single Service Parsing (用去掉 special 前缀后的名字解析)
+  const coreKeyword = cleanName.replace(/[0-9]/g, '').trim(); // "头"
   const formattedName = VOCABULARY[coreKeyword] || name;
 
   // Tailor beautiful subtitles based on category to boost SEO and conversions

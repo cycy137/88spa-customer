@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { transformServiceData } from '../utils/serviceMapper';
 
 /**
- * 官网高联动在线预约弹窗
- * 规则：电话核心必填，姓名/邮箱可选，过滤兼职技师，移除房间选择，支持多选 Add-ons 金额累加
+ * 官网在线预约弹窗
+ * 流程：先选时间 → 再选项目（分类卡片，非长列表）→ 联系方式 → 提交
+ * 规则：电话必填，姓名/邮箱可选；技师自动分配（已移除 Preferred Therapist 选项）
  */
 
 // 当天日期（本地时区，格式 YYYY-MM-DD），用于预约日期默认值
@@ -15,51 +16,61 @@ const todayStr = () => {
   return `${d.getFullYear()}-${m}-${day}`;
 };
 
-export default function BookingModal({ isOpen, onClose, servicesList = [], staffList = [], selectedService, onSubmitAppointment }) {
+// 项目分类（与 Services 主菜单保持一致的顺序）
+const SERVICE_CATEGORIES = ['Combo', 'Full Body', 'Head', 'Foot'];
+const priceOf = (s) => s.salePrice ?? s.price;
+
+export default function BookingModal({ isOpen, onClose, servicesList = [], selectedService, onSubmitAppointment }) {
   
-  // 1. 初始化表单状态
+  // 1. 初始化表单状态（无 staffId，技师自动分配）
   const [formData, setFormData] = useState({
-    customerPhone: '',     // 🌟 唯一核心必填
+    customerPhone: '',     // 唯一核心必填
     customerName: '',      // Optional
     customerEmail: '',     // Optional
-    serviceId: '',         // 动态主项目联动
-    staffId: '',           // 🌟 动态技师联动 (Optional)
-    appointmentDate: todayStr(), // 🌟 默认当天
+    serviceId: '',         // 选择的项目
+    appointmentDate: todayStr(),
     appointmentTime: '',
     notes: ''              // 备注
   });
 
-  // 2. 初始化选中的加购项状态（存储选中的 Add-on 服务的 ID 数组）
+  // 2. 初始化选中的加购项状态
   const [selectedAddons, setSelectedAddons] = useState([]);
+
+  // 2b. 预约人数（默认 1 人，可选 1-8 人）
+  const [partySize, setPartySize] = useState(1);
+
+  // 3. 项目分类 Tab 状态（默认 Combo）
+  const [serviceCategory, setServiceCategory] = useState('Combo');
 
   // 从共享的全量服务列表中，精准剥离出“升级加购项（isAddon === 1）”
   const addonServices = servicesList.filter(item => item.isAddon === 1);
-  // 剥离出常规主项目（用于下拉菜单联动选择）
+  // 剥离出常规主项目
   const mainServices = servicesList.filter(item => item.isAddon !== 1);
 
-  // 🌟 核心过滤：从后台捞过来的技师列表中，过滤掉所有 Part-time（兼职）人员，只把 Full-time（全职）展现给前台客户
-  // 假设您的 staff 表中有一个 status、type 或者 role 字段来区分；如果字段名不同，您可以对应修改下面这个 filter 条件
-  const availableStaff = staffList.filter(member => 
-    member.role !== 'Part-time' && 
-    member.status !== 'Part-time' && 
-    member.type !== 'Part-time' &&
-    member.name !== 'PartTime'
-  );
+  // 当前分类下的项目（按价格从低到高）
+  const categoryServices = mainServices
+    .filter(s => s.category === serviceCategory)
+    .sort((a, b) => priceOf(a) - priceOf(b));
 
-  // 当客户点击卡片直达预约时，自动锁定制定的服务
+  // 打开弹窗时初始化：日期重置为今天，加购清空，人数重置为 1，项目按传入的 selectedService 或默认 Combo 最便宜的
   useEffect(() => {
+    if (!isOpen) return;
+    setSelectedAddons([]);
+    setPartySize(1);
+    setFormData(prev => ({ ...prev, appointmentDate: todayStr() }));
+    const pick = (svc) => {
+      setFormData(prev => ({ ...prev, serviceId: svc.id.toString() }));
+      setServiceCategory(SERVICE_CATEGORIES.includes(svc.category) ? svc.category : 'Combo');
+    };
     if (selectedService) {
-      setFormData(prev => ({ ...prev, serviceId: selectedService.id.toString() }));
-    } else if (mainServices.length > 0) {
-      setFormData(prev => ({ ...prev, serviceId: mainServices[0].id.toString() }));
+      pick(selectedService);
+    } else {
+      const sorted = [...mainServices].sort((a, b) => priceOf(a) - priceOf(b));
+      const combos = sorted.filter(s => s.category === 'Combo');
+      const fallback = combos[0] || sorted[0];
+      if (fallback) pick(fallback);
     }
-  }, [selectedService, servicesList, isOpen]);
-
-  // 🌟 预约日期默认当天：每次打开弹窗都重置为今天
-  useEffect(() => {
-    if (isOpen) {
-      setFormData(prev => ({ ...prev, appointmentDate: todayStr() }));
-    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -74,87 +85,65 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
   const handleAddonToggle = (addonId) => {
     setSelectedAddons(prev => 
       prev.includes(addonId) 
-        ? prev.filter(id => id !== addonId) // 已存在则移除
-        : [...prev, addonId]                // 不存在则加入
+        ? prev.filter(id => id !== addonId)
+        : [...prev, addonId]
     );
   };
 
-  // 3. 动态价格实时计算（主项目实时价 + 所有勾选的加购特价）
+  // 动态价格实时计算（主项目实时价 + 所有勾选的加购特价）
   const currentMainService = servicesList.find(s => s.id.toString() === formData.serviceId);
-  const mainPrice = currentMainService ? (currentMainService.salePrice ?? currentMainService.price) : 0;
+  const mainPrice = currentMainService ? priceOf(currentMainService) : 0;
   
   const addonsTotal = selectedAddons.reduce((sum, id) => {
     const addon = addonServices.find(a => a.id === id);
-    return sum + (addon ? (addon.salePrice ?? addon.price) : 0);
+    return sum + (addon ? priceOf(addon) : 0);
   }, 0);
 
-  const finalEstimatedTotal = mainPrice + addonsTotal;
+  const finalEstimatedTotal = (mainPrice + addonsTotal) * partySize;
 
-  // 4. 提交预约申请，打通 D1 数据链
-// src/components/BookingModal.jsx 内部的 handleSubmit 核心修正段落
-
-    const handleSubmit = (e) => {
+  // 提交预约申请
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    // 1. 强力格式校验：确保手机号不为空（对应您的核心必填项诉求）
     if (!formData.customerPhone.trim()) {
-        alert("Phone Number is strictly required to secure your appointment.");
-        return;
+      alert("Phone Number is strictly required to secure your appointment.");
+      return;
     }
     if (!formData.appointmentDate || !formData.appointmentTime) {
-        alert("Please select a valid Date and Time.");
-        return;
+      alert("Please select a valid Date and Time.");
+      return;
+    }
+    if (!formData.serviceId) {
+      alert("Please select a treatment.");
+      return;
     }
 
-    // 2. 匹配当前指派的技师对象（从 B 端共享过来的 staffList 中检索）
-    let assignedStaffName = "Auto Assign"; 
-    let assignedStaffId = formData.staffId ? parseInt(formData.staffId) : null;
-
-    if (formData.staffId) {
-        const selectedStaffObj = staffList.find(s => s.id.toString() === formData.staffId);
-        if (selectedStaffObj) {
-        assignedStaffName = selectedStaffObj.name;
-        }
-    } else {
-        // 🌟 细节保底：如果客户选了默认的 Auto Assign 盲选，为了不让 staffId 写入 null 导致后台崩盘，
-        // 我们强制默认绑定到系统 1 号技师或特定公共池（这里根据您的格式对齐保留，或者传给后端处理）
-        assignedStaffId = 1; 
-        assignedStaffName = "House Staff";
-    }
-
-    // 3. 完美适配您提供的 API Body 规范，将 ISO 时间戳以及全量字段格式化封装
-    // 结合所选日期与时间，转换成符合标准 UTC 的 ISO8601 字符串（例如: "2026-09-22T11:05:00.000Z"）
     const combinedDateTime = new Date(`${formData.appointmentDate}T${formData.appointmentTime}:00`);
     const isoTimeStr = combinedDateTime.toISOString();
 
-    // 把选中的加购项追加进备注里
     const addonText = selectedAddons.length > 0 
-        ? `[Add-ons: ${selectedAddons.map(id => addonServices.find(a => a.id === id)?.name).join(', ')}]`
-        : '';
-    const finalRemark = formData.notes.trim() 
-        ? `${formData.notes.trim()} ${addonText}`.trim() 
-        : addonText;
+      ? `[Add-ons: ${selectedAddons.map(id => addonServices.find(a => a.id === id)?.name).join(', ')}]`
+      : '';
+    const partyText = partySize > 1 ? `[Party of ${partySize}]` : '';
+    const finalRemark = [formData.notes.trim(), addonText, partyText].filter(Boolean).join(' ');
 
-    // 🌟【这就是发给 https://88spa.cycy1357.workers.dev/api/appointments 的完美 Payload】
     const finalPayload = {
-        customerName: formData.customerName.trim() || "Guest Client", // 姓名可选
-        customerPhone: formData.customerPhone.trim(),                  // 电话主体
-        staffId: assignedStaffId,                                      // 整数 (e.g. 2)
-        staffName: assignedStaffName,                                  // 字符串 (e.g. "Shanny")
-        serviceId: parseInt(formData.serviceId),                       // 整数 (e.g. 2)
-        serviceName: currentMainService ? currentMainService.name : "未知项目", // 字符串 (e.g. "脚60")
-        appointmentTime: isoTimeStr,                                   // UTC ISO 时间戳字符串
-        duration: currentMainService ? currentMainService.duration : 60,// 整数 (e.g. 60)
-        serviceFee: finalEstimatedTotal,                               // 包含 Add-on 的总价格数 (e.g. 60)
-        tip: 0,                                                        // 默认小费 0
-        status: "booked",                                              // 官网预定，状态锁死为 "booked"
-        remark: finalRemark                                            // 整合手写备注与加购
+      customerName: formData.customerName.trim() || "Guest Client",
+      customerPhone: formData.customerPhone.trim(),
+      staffId: 1,               // 自动分配
+      staffName: "House Staff", // 自动分配
+      serviceId: parseInt(formData.serviceId),
+      serviceName: currentMainService ? currentMainService.name : "未知项目",
+      appointmentTime: isoTimeStr,
+      duration: currentMainService ? currentMainService.duration : 60,
+      serviceFee: finalEstimatedTotal,
+      tip: 0,
+      status: "booked",
+      remark: finalRemark
     };
 
-    // 4. 正式触发 App.jsx 传下来的异步 fetch 发送动作
     onSubmitAppointment(finalPayload);
-    };
-
+  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex p-4 bg-spa-textDark/60 backdrop-blur-sm animate-fade-in">
@@ -171,94 +160,157 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
           <p className="text-xs text-spa-textMuted mt-1">Real-time dynamic integration with 88spa database</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-sm">
+        <form onSubmit={handleSubmit} className="space-y-5 text-sm">
           
-          {/* 1. 唯一核心必填：手机号 */}
+          {/* Step 1：先选时间 */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Phone Number * (Required)</label>
-            <input
-              type="tel" name="customerPhone" required value={formData.customerPhone} onChange={handleChange} placeholder="(425) 867-1867"
-              className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base font-medium tracking-wide"
-            />
-          </div>
-
-          {/* 2. 全量可选字段组（姓名与邮箱） */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Your Name (Optional)</label>
-              <input
-                type="text" name="customerName" value={formData.customerName} onChange={handleChange} placeholder="e.g. Sarah J."
-                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base"
-              />
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-5 h-5 rounded-full bg-spa-brand text-white text-[11px] flex items-center justify-center font-semibold">1</span>
+              <label className="text-xs font-semibold uppercase tracking-wider text-spa-textDark">Select Date & Time *</label>
             </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Email (Optional)</label>
-              <input
-                type="email" name="customerEmail" value={formData.customerEmail} onChange={handleChange} placeholder="sarah@example.com"
-                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <input
+                  type="date" name="appointmentDate" required value={formData.appointmentDate} onChange={handleChange}
+                  className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base font-medium"
+                />
+              </div>
+              <div>
+                <input
+                  type="time" name="appointmentTime" required value={formData.appointmentTime} onChange={handleChange}
+                  className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base font-medium"
+                />
+              </div>
             </div>
           </div>
 
-          {/* 3. 动态联动：选择主服务项目 */}
+          {/* Step 2：再选项目（分类卡片，非长列表） */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Select Treatment *</label>
-             <select
-                name="serviceId" 
-                value={formData.serviceId} 
-                onChange={handleChange}
-                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-spa-textDark font-medium"
-            >
-                {mainServices.map(service => {
-                
-                // 🌟【核心修复点】：在这里直接拦截并将下拉列表中的“头40”转化为专业英文名称
-                const { displayName } = transformServiceData(service);
-
-                return (
-                    <option key={service.id} value={service.id}>
-                    {displayName} ({service.duration} mins) — \${service.salePrice || service.price}
-                    {service.salePrice ? ' [🔥 SPECIAL OFFER]' : ''}
-                    </option>
-                );
-                })}
-            </select>
-          </div>
-
-          {/* 4. 动态数据共享：选特定的全职技师 (Optional) */}
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Preferred Therapist (Optional)</label>
-            <select
-              name="staffId" value={formData.staffId} onChange={handleChange}
-              className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors font-medium text-spa-textDark"
-            >
-              <option value="">Auto Assign (Best Available Therapist)</option>
-              {availableStaff.map(staff => (
-                <option key={staff.id} value={staff.id}>
-                  {staff.name}
-                </option>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-5 h-5 rounded-full bg-spa-brand text-white text-[11px] flex items-center justify-center font-semibold">2</span>
+              <label className="text-xs font-semibold uppercase tracking-wider text-spa-textDark">Select Treatment *</label>
+            </div>
+            {/* 分类小 Tab */}
+            <div className="flex flex-wrap gap-2 mb-3">
+              {SERVICE_CATEGORIES.map(cat => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setServiceCategory(cat)}
+                  className={`px-4 py-1.5 rounded-full text-xs tracking-wider transition-all ${
+                    serviceCategory === cat
+                      ? 'bg-spa-brand text-white font-medium shadow-sm'
+                      : 'bg-spa-accent/30 hover:bg-spa-accent/60 text-spa-textDark/80'
+                  }`}
+                >
+                  {cat}
+                </button>
               ))}
-            </select>
+            </div>
+            {/* 项目卡片（单选） */}
+            <div className="grid grid-cols-1 gap-2 max-h-72 overflow-y-auto pr-1">
+              {categoryServices.map(service => {
+                const { displayName } = transformServiceData(service);
+                const isSelected = formData.serviceId === service.id.toString();
+                return (
+                  <button
+                    key={service.id}
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, serviceId: service.id.toString() }))}
+                    className={`flex items-center justify-between text-left p-3 rounded-xl border transition-all ${
+                      isSelected
+                        ? 'bg-spa-brand/5 border-spa-brand shadow-sm'
+                        : 'bg-spa-lightBg border-spa-accent/60 hover:border-spa-brand/40'
+                    }`}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-medium truncate">{displayName}</div>
+                      <div className="mt-1.5">
+                        <span className="inline-flex items-center gap-1 text-xs font-bold text-spa-gold bg-spa-gold/10 border border-spa-gold/30 px-2.5 py-1 rounded-full">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          {service.duration} mins
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex-shrink-0 ml-3 text-right">
+                      <span className="text-sm font-semibold">${priceOf(service)}</span>
+                      {service.salePrice ? (
+                        <span className="ml-1.5 text-[10px] font-bold text-red-500 uppercase">Sale</span>
+                      ) : null}
+                    </div>
+                  </button>
+                );
+              })}
+              {categoryServices.length === 0 && (
+                <p className="text-xs text-spa-textMuted text-center py-4">No treatments in this category yet.</p>
+              )}
+            </div>
+
+       
           </div>
 
-          {/* 5. 极简时间调度排班组（移除了 roomNumber） */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Date *</label>
-              <input
-                type="date" name="appointmentDate" required value={formData.appointmentDate} onChange={handleChange}
-                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base font-medium"
-              />
+          {/* Step 3：联系方式 */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-5 h-5 rounded-full bg-spa-brand text-white text-[11px] flex items-center justify-center font-semibold">3</span>
+              <label className="text-xs font-semibold uppercase tracking-wider text-spa-textDark">Your Contact Info</label>
             </div>
-            <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Time *</label>
-              <input
-                type="time" name="appointmentTime" required value={formData.appointmentTime} onChange={handleChange}
-                className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base font-medium"
-              />
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Phone Number * (Required)</label>
+                <input
+                  type="tel" name="customerPhone" required value={formData.customerPhone} onChange={handleChange} placeholder="(425) 867-1867"
+                  className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base font-medium tracking-wide"
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Your Name (Optional)</label>
+                  <input
+                    type="text" name="customerName" value={formData.customerName} onChange={handleChange} placeholder="e.g. Sarah J."
+                    className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">Email (Optional)</label>
+                  <input
+                    type="email" name="customerEmail" value={formData.customerEmail} onChange={handleChange} placeholder="sarah@example.com"
+                    className="w-full bg-spa-lightBg border border-spa-accent rounded-xl px-4 py-3 focus:outline-none focus:border-spa-brand transition-colors text-base"
+                  />
+                </div>
+              </div>
+            </div>
+                 {/* 预约人数 */}
+            <div className="flex items-center justify-between mt-3 p-3 bg-spa-lightBg border border-spa-accent/60 rounded-xl">
+              <div>
+                <div className="text-sm font-medium">Number of Guests</div>
+                <div className="text-[11px] text-spa-textMuted">How many people is this booking for?</div>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setPartySize(prev => Math.max(1, prev - 1))}
+                  disabled={partySize <= 1}
+                  className="w-8 h-8 rounded-full border border-spa-accent flex items-center justify-center text-lg font-medium transition-all hover:border-spa-brand disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  −
+                </button>
+                <span className="text-base font-bold w-6 text-center">{partySize}</span>
+                <button
+                  type="button"
+                  onClick={() => setPartySize(prev => Math.min(8, prev + 1))}
+                  disabled={partySize >= 8}
+                  className="w-8 h-8 rounded-full border border-spa-accent flex items-center justify-center text-lg font-medium transition-all hover:border-spa-brand disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  +
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* 6. 🌟 高光视觉：升级加购项目区（Add-ons Checkboxes） */}
+          {/* 升级加购项目区（Add-ons Checkboxes） */}
           {addonServices.length > 0 && (
             <div className="bg-spa-accent/20 p-4 rounded-2xl border border-spa-accent/60 space-y-3 animate-fade-in">
               <span className="block text-xs font-bold uppercase tracking-widest text-spa-gold">
@@ -267,7 +319,7 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
               <div className="space-y-2">
                 {addonServices.map(addon => {
                   const isChecked = selectedAddons.includes(addon.id);
-                  const promoPrice = addon.salePrice ?? addon.price;
+                  const promoPrice = priceOf(addon);
                   return (
                     <label 
                       key={addon.id} 
@@ -292,7 +344,7 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
                         </div>
                       </div>
                       <span className="text-sm font-semibold text-spa-brand flex-shrink-0">
-                        {promoPrice === 0 ? 'FREE' : `+\$${promoPrice}`}
+                        {promoPrice === 0 ? 'FREE' : `+$${promoPrice}`}
                       </span>
                     </label>
                   );
@@ -301,7 +353,7 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
             </div>
           )}
 
-          {/* 7. 到店备注 */}
+          {/* 到店备注 */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-spa-textMuted mb-1">
               Special Requests / Notes (Optional)
@@ -316,14 +368,14 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], staff
             />
           </div>
 
-          {/* 8. 实时总价动态换算与一键拦截提交流水线 */}
+          {/* 实时总价动态换算与提交 */}
           <div className="pt-4 border-t border-spa-accent/30 flex items-center justify-between gap-4 mt-6">
             <div className="flex flex-col">
               <span className="text-xs uppercase tracking-wider text-spa-textMuted font-semibold leading-none mb-1">
                 Estimated Total
               </span>
               <span className="text-2xl font-bold tracking-tight text-spa-brand leading-none">
-                \${finalEstimatedTotal}
+                ${finalEstimatedTotal}
               </span>
             </div>
             <button

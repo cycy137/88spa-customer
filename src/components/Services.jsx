@@ -7,8 +7,8 @@ import { transformServiceData } from '../utils/serviceMapper';
 export default function Services({ onBookNowClick }) {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  // 默认选中的分类设为 'All'
-  const [activeCategory, setActiveCategory] = useState('All');
+  // 默认选中的分类设为 'Combo'
+  const [activeCategory, setActiveCategory] = useState('Combo');
 
   // 页面加载时，从共享的 Cloudflare Worker 捞取 D1 数据
   useEffect(() => {
@@ -27,8 +27,8 @@ export default function Services({ onBookNowClick }) {
     loadServices();
   }, []);
 
-  // 1. 严格按照您的指示，定义客户前台展示的 4 大核心正规分类
-  const categories = ['All', 'Head', 'Foot', 'Full Body', 'Combo'];
+  // 1. 分类 Tab 顺序：Combo、Body、Head、Foot，最后才是 All；价格从低到高排序
+  const categories = ['Combo', 'Full Body', 'Head', 'Foot', 'All'];
 
   // 2. 核心隔离逻辑 A：全量过滤掉属于“升级加购项（Add-ons）”的服务，不让它们在主菜单的大卡片里乱入
   const standardMainServices = services.filter(item => item.isAddon !== 1);
@@ -36,10 +36,12 @@ export default function Services({ onBookNowClick }) {
   // 3. 核心隔离逻辑 B：常规主菜单中排除掉带 salePrice/isSpecial 的促销款，防止与上方的 SpecialPromo 组件产生数据重复
   const regularItemsOnly = standardMainServices.filter(item => !item.salePrice && !item.isSpecial);
 
-  // 4. 根据当前点选的 Tab 进行高精度分类匹配过滤
-  const displayedItems = activeCategory === 'All'
+  // 4. 根据当前点选的 Tab 进行高精度分类匹配过滤，并按价格从低到高排序
+  const priceOf = (item) => item.salePrice ?? item.price;
+  const displayedItems = (activeCategory === 'All'
     ? regularItemsOnly
-    : regularItemsOnly.filter(item => item.category === activeCategory);
+    : regularItemsOnly.filter(item => item.category === activeCategory)
+  ).sort((a, b) => priceOf(a) - priceOf(b));
 
   return (
     <section id="services" className="py-24 bg-spa-lightBg text-spa-textDark">

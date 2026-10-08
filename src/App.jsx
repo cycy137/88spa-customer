@@ -75,7 +75,6 @@ export default function App() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         servicesList={dbConfig.services} // 传入联动项目与加购项
-        staffList={dbConfig.staff}       // 🌟 核心：将后端 D1 初始化拉取到的技师列表无缝推给弹窗过滤！
         selectedService={targetService}
         onSubmitAppointment={handleAppointmentSubmit}
       />
