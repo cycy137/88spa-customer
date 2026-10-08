@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://88spamssage.com/sitemap.xml
