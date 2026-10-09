@@ -121,7 +121,7 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], selec
     const combinedDateTime = new Date(`${formData.appointmentDate}T${formData.appointmentTime}:00`);
     const isoTimeStr = combinedDateTime.toISOString();
 
-    const addonText = selectedAddons.length > 0 
+    const addonText = selectedAddons.length > 0
       ? `[Add-ons: ${selectedAddons.map(id => addonServices.find(a => a.id === id)?.name).join(', ')}]`
       : '';
     const partyText = partySize > 1 ? `[Party of ${partySize}]` : '';
@@ -139,7 +139,9 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], selec
       serviceFee: finalEstimatedTotal,
       tip: 0,
       status: "booked",
-      remark: finalRemark
+      remark: finalRemark,
+      source: "website",
+      partySize: partySize
     };
 
     onSubmitAppointment(finalPayload);
