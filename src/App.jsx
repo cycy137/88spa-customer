@@ -5,6 +5,7 @@ import Hero from './components/Hero';
 import SpecialPromo from './components/SpecialPromo'; 
 import Services from './components/Services';
 import Reviews from './components/Reviews';
+import Faq from './components/Faq';
 import Footer from './components/Footer';
 import BookingModal from './components/BookingModal';
 import MobileBookingPopup from './components/MobileBookingPopup';
@@ -39,7 +40,7 @@ export default function App() {
   const handleAppointmentSubmit = async (appointmentPayload) => {
     try {
       await createAppointment(appointmentPayload);
-      alert(`🎉 Appointment submitted successfully for ${appointmentPayload.customerName}!`);
+      alert(`\u{1F389} Appointment submitted successfully for ${appointmentPayload.customerName}!`);
       setIsModalOpen(false);
     } catch (error) {
       alert("Failed to sync appointment with backend. Please retry.");
@@ -65,6 +66,9 @@ export default function App() {
         <Services onBookNowClick={handleOpenBooking} />
         
         <Reviews />
+
+        {/* 4. FAQ 问答区（含 FAQPage 结构化数据，服务 SEO/GEO） */}
+        <Faq />
       </main>
       
       <Footer />
