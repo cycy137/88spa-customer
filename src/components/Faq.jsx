@@ -11,6 +11,14 @@ const FAQS = [
     a: "Start with a body massage \u2014 it's our most popular service and the best introduction to what we do. Your therapist works through back, neck, shoulder, and leg tension with deep, therapeutic pressure tailored to you. Want the full experience in one visit? Our Body + Head combo pairs a complete massage with the traditional head spa ritual."
   },
   {
+    q: "How much does a head spa cost?",
+    a: "Head spa sessions run $68 for 40 minutes, $88 for 60 minutes, and $128 for 90 minutes. Our most-booked option is the 60-minute Signature at $88 \u2014 the full traditional ritual including deep cleanse, scalp massage, warm-water therapy, and a finishing blow-dry."
+  },
+  {
+    q: "How much does a body massage cost?",
+    a: "Body massage starts at $50 for 30 minutes, $80 for 60 minutes, $110 for 90 minutes, and $140 for a full two hours. It's our most popular service. The best value is in our combos \u2014 for example, a 60-minute body massage paired with a 60-minute head spa is $158 for two full hours."
+  },
+  {
     q: "What does a body massage session include?",
     a: "A full-body therapeutic massage focused on the areas where tension builds up: back, neck, shoulders, arms, and legs. We use deep tissue techniques to release knots, ease chronic tightness, and improve circulation \u2014 all at a pressure level you choose. Sessions run 60 or 90 minutes, and most guests tell us the 90-minute session is worth it."
   },
