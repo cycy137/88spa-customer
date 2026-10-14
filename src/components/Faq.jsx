@@ -8,7 +8,11 @@ const FAQS = [
   },
   {
     q: "Which treatment should I try for my first visit?",
-    a: "Start with our Signature Head Spa. It covers the full traditional sequence \u2014 cleanse, scalp massage, warm-water therapy, and a finishing blow-dry \u2014 so you experience everything in one session. If you also want bodywork, our Head + Foot combo is the most-booked way in."
+    a: "Start with a body massage \u2014 it's our most popular service and the best introduction to what we do. Your therapist works through back, neck, shoulder, and leg tension with deep, therapeutic pressure tailored to you. Want the full experience in one visit? Our Body + Head combo pairs a complete massage with the traditional head spa ritual."
+  },
+  {
+    q: "What does a body massage session include?",
+    a: "A full-body therapeutic massage focused on the areas where tension builds up: back, neck, shoulders, arms, and legs. We use deep tissue techniques to release knots, ease chronic tightness, and improve circulation \u2014 all at a pressure level you choose. Sessions run 60 or 90 minutes, and most guests tell us the 90-minute session is worth it."
   },
   {
     q: "Will my hair be wet when I leave?",
@@ -24,23 +28,19 @@ const FAQS = [
   },
   {
     q: "Can I ask for softer pressure or warmer water?",
-    a: "Please do \u2014 before your session and during it. Water temperature and massage pressure are set to your comfort, and adjusting mid-session is completely normal. If anything genuinely doesn't feel right, tell your therapist right away."
+    a: "Please do \u2014 before your session and during it. Massage pressure and water temperature are set to your comfort, and adjusting mid-session is completely normal. If anything genuinely doesn't feel right, tell your therapist right away."
   },
   {
-    q: "How often should I get a head spa?",
-    a: "For ongoing scalp health, most guests come every 3 to 4 weeks \u2014 similar to a facial schedule. If you're dealing with buildup, dryness, or an itchy scalp, your therapist may suggest a shorter interval for the first few visits."
+    q: "How often should I come in?",
+    a: "For ongoing benefits, most guests book every 3 to 4 weeks \u2014 whether that's body massage for tension maintenance or head spa for scalp health. If you're working through chronic tightness or heavy scalp buildup, your therapist may suggest a shorter interval for the first few visits."
   },
   {
     q: "Do you take walk-ins, or should I book ahead?",
-    a: "Appointments are recommended \u2014 head spa sessions need a dedicated therapy bed, so same-day availability isn't guaranteed. Call us at (425) 867-1867 or book online to reserve your spot."
+    a: "Appointments are recommended \u2014 massage and head spa sessions need a dedicated therapy room, so same-day availability isn't guaranteed. Call us at (425) 867-1867 or book online to reserve your spot."
   },
   {
-    q: "Is head spa only for women?",
-    a: "Not at all. Scalp health and stress relief are for everyone, and a good share of our guests are men. The treatment is fully customized to your hair length and scalp condition."
-  },
-  {
-    q: "What other services do you offer besides head spa?",
-    a: "We're a full massage spa: deep tissue and Swedish body massage, foot reflexology, cupping therapy as an add-on, and combo packages that pair head spa with massage or foot treatments in a single visit. Check our Treatment Menu above for the full list."
+    q: "Do you offer foot massage or add-ons like cupping?",
+    a: "Yes. Foot reflexology is available on its own or paired with body massage and head spa in our combo packages. Cupping therapy can be added to any body massage session for deeper release of stubborn tension \u2014 just ask when you book. Check our Treatment Menu above for the full list."
   }
 ];
 
@@ -79,7 +79,7 @@ export default function Faq() {
           </h2>
           <div className="h-[1px] w-20 bg-spa-gold mx-auto mb-6" />
           <p className="text-spa-textMuted font-light tracking-wide leading-relaxed">
-            Everything you'd want to know before your first head spa visit.
+            Everything you'd want to know before your first visit.
           </p>
         </div>
 
