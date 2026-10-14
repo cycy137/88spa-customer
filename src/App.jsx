@@ -39,8 +39,8 @@ export default function App() {
 
   const handleAppointmentSubmit = async (appointmentPayload) => {
     try {
-      await createAppointment(appointmentPayload));
-      alert(`🎉 Appointment submitted successfully for ${appointmentPayload.customerName}!`);
+      await createAppointment(appointmentPayload);
+      alert(`\u{1F389} Appointment submitted successfully for ${appointmentPayload.customerName}!`);
       setIsModalOpen(false);
     } catch (error) {
       alert("Failed to sync appointment with backend. Please retry.");
