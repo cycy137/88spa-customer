@@ -17,6 +17,7 @@ export default function Navbar({ onBookNowClick }) {
           <div className="hidden md:flex space-x-8 text-sm font-medium tracking-wide">
             <a href="#services" className="hover:text-spa-gold transition-colors duration-300">Services</a>
             <a href="#reviews" className="hover:text-spa-gold transition-colors duration-300">Reviews</a>
+            <a href="#faq" className="hover:text-spa-gold transition-colors duration-300">FAQ</a>
             <a href="#contact" className="hover:text-spa-gold transition-colors duration-300">Hours & Location</a>
           </div>
 
