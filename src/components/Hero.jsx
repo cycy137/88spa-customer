@@ -24,13 +24,15 @@ export default function Hero({ onBookNowClick }) {
           Premium Head Spa & Therapeutic Massage
         </p>
 
+        {/* SEO: H1 carries the primary keywords (service + location) */}
         <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif font-light tracking-tight leading-tight mb-8 drop-shadow-md">
-          Recharge Your Mind. <br />
-          <span className="font-serif italic text-spa-gold">Revitalize</span> Your Body.
+          Traditional Head Spa <br />
+          <span className="font-serif italic text-spa-gold">&</span> Therapeutic Body Massage
+          <span className="block text-2xl sm:text-3xl md:text-4xl mt-4 text-white/90">in Redmond, WA</span>
         </h1>
 
         <p className="max-w-xl mx-auto text-base sm:text-lg text-white/90 font-light tracking-wide leading-relaxed mb-12 drop-shadow-sm">
-          Experience Redmond's premier holistic wellness sanctuary. Immerse yourself in our signature Japanese head spa treatments and deep tissue body therapies designed for ultimate restoration.
+          Recharge your mind. Revitalize your body. Experience Redmond's premier holistic wellness sanctuary — signature traditional head spa rituals and deep tissue body therapies designed for ultimate restoration.
         </p>
 
         {/* 核心交互动作区 */}

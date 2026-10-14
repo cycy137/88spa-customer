@@ -48,7 +48,11 @@ export default function Footer() {
               <div>
                 <h4 className="font-semibold text-spa-gold tracking-wider uppercase text-xs mb-1">Location</h4>
                 <p className="font-light text-spa-textMuted/90">
-                  88 Head Spa & Massage, Redmond, WA 98052
+                  88 Head Spa & Massage, 16720 Redmond Way #C, Redmond, WA 98052
+                </p>
+                {/* SEO: areas served for neighboring-city searches */}
+                <p className="font-light text-spa-textMuted/60 text-sm mt-1">
+                  Serving Redmond, Bellevue, Kirkland, Sammamish & Woodinville
                 </p>
               </div>
             </div>
