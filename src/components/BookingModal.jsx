@@ -47,10 +47,10 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], selec
   // 剥离出常规主项目
   const mainServices = servicesList.filter(item => item.isAddon !== 1);
 
-  // 当前分类下的项目（按价格从低到高）
+  // 当前分类下的项目（按时长从短到长，时长相同时按价格）
   const categoryServices = mainServices
     .filter(s => s.category === serviceCategory)
-    .sort((a, b) => priceOf(a) - priceOf(b));
+    .sort((a, b) => (Number(a.duration) - Number(b.duration)) || (priceOf(a) - priceOf(b)));
 
   // 打开弹窗时初始化：日期重置为今天，加购清空，人数重置为 1，项目按传入的 selectedService 或默认 Combo 最便宜的
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function BookingModal({ isOpen, onClose, servicesList = [], selec
   const handleAddonToggle = (addonId) => {
     setSelectedAddons(prev => 
       prev.includes(addonId) 
-        ? prev.filter(id => id !== addonId)
+        ? prev.filter(id => id !== addonId) 
         : [...prev, addonId]
     );
   };
