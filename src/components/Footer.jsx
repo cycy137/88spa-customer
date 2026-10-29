@@ -33,7 +33,7 @@ export default function Footer() {
                 <a href="tel:4258671867" className="font-light text-spa-textMuted/80 hover:text-spa-gold block transition-colors">
                   (425) 867-1867
                 </a>
-                <p className="text-xs text-spa-textMuted/40 mt-1">Appointments Required</p>
+                <p className="text-xs text-spa-textMuted/40 mt-1">We Accept Walk-Ins</p>
               </div>
             </div>
           </div>

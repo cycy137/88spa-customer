@@ -27,7 +27,7 @@ export default function Services({ onBookNowClick }) {
     loadServices();
   }, []);
 
-  // 1. 分类 Tab 顺序：Combo、Body、Head、Foot，最后才是 All；价格从低到高排序
+  // 1. 分类 Tab 顺序：Combo、Body、Head、Foot，最后才是 All；按时长从短到长排序，时长相同时按价格排序
   const categories = ['Combo', 'Full Body', 'Head', 'Foot', 'All'];
 
   // 2. 核心隔离逻辑 A：全量过滤掉属于“升级加购项（Add-ons）”的服务，不让它们在主菜单的大卡片里乱入
@@ -36,12 +36,12 @@ export default function Services({ onBookNowClick }) {
   // 3. 核心隔离逻辑 B：常规主菜单中排除掉带 salePrice/isSpecial 的促销款，防止与上方的 SpecialPromo 组件产生数据重复
   const regularItemsOnly = standardMainServices.filter(item => !item.salePrice && !item.isSpecial);
 
-  // 4. 根据当前点选的 Tab 进行高精度分类匹配过滤，并按价格从低到高排序
+  // 4. 根据当前点选的 Tab 进行高精度分类匹配过滤，并按时长从短到长排序（时长相同时按价格排序）
   const priceOf = (item) => item.salePrice ?? item.price;
   const displayedItems = (activeCategory === 'All'
     ? regularItemsOnly
     : regularItemsOnly.filter(item => item.category === activeCategory)
-  ).sort((a, b) => priceOf(a) - priceOf(b));
+  ).sort((a, b) => (Number(a.duration) - Number(b.duration)) || (priceOf(a) - priceOf(b)));
 
   return (
     <section id="services" className="py-24 bg-spa-lightBg text-spa-textDark">
