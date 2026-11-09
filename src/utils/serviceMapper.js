@@ -11,6 +11,27 @@ const VOCABULARY = {
 };
 
 /**
+ * Facial services (new category): Chinese names as stored in D1 map to the
+ * English display names shown on the customer site (B 端存中文，C 端只显示英文).
+ * Subtitles are written from the treatment names themselves for PR review.
+ */
+const FACIAL_NAMES = {
+  '净肤清洁护理': 'Clarifying Facial',
+  '磨皮': 'Microdermabrasion Facial',
+  '补水保湿护理': 'Hydrating Facial',
+  '屏障修复护理': 'Barrier Repair Facial',
+  '中式传统刮面部水疗护理': 'Traditional Chinese Guasha Facial'
+};
+
+const FACIAL_SUBTITLES = {
+  '净肤清洁护理': 'A deep-cleansing facial to clarify congested skin and restore a fresh, balanced complexion.',
+  '磨皮': 'A gentle microdermabrasion facial that polishes away dull surface skin for a smoother, brighter complexion.',
+  '补水保湿护理': 'A moisture-restoring facial that replenishes hydration for soft, plump, dewy skin.',
+  '屏障修复护理': 'A restorative facial focused on repairing the skin barrier and calming stressed, sensitive skin.',
+  '中式传统刮面部水疗护理': 'A traditional Chinese guasha facial: gentle scraping massage to boost circulation and release facial tension.'
+};
+
+/**
  * Short plain-English labels for the minute-by-minute breakdown shown in combo subtitles,
  * e.g. "60 min full body massage + 30 min foot reflexology"
  */
@@ -38,6 +59,14 @@ export function transformServiceData(rawService) {
     return {
       displayName: `Premium Foot Reflexology Special`,
       displaySubtitle: `Exclusive seasonal deep tissue & pressure point massage sequence.`
+    };
+  }
+
+  // 面部新项目：B 端存中文原名，C 端按 FACIAL_NAMES 直译英文名（不经过头/身体/脚的关键字解析）
+  if (FACIAL_NAMES[name]) {
+    return {
+      displayName: FACIAL_NAMES[name],
+      displaySubtitle: FACIAL_SUBTITLES[name]
     };
   }
 

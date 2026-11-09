@@ -17,7 +17,7 @@ const todayStr = () => {
 };
 
 // 项目分类（与 Services 主菜单保持一致的顺序）
-const SERVICE_CATEGORIES = ['Combo', 'Full Body', 'Head', 'Foot'];
+const SERVICE_CATEGORIES = ['Combo', 'Full Body', 'Head', 'Foot', 'Facial'];
 const priceOf = (s) => s.salePrice ?? s.price;
 
 export default function BookingModal({ isOpen, onClose, servicesList = [], selectedService, onSubmitAppointment }) {

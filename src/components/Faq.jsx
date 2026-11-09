@@ -19,6 +19,10 @@ const FAQS = [
     a: "Body massage starts at $50 for 30 minutes, $80 for 60 minutes, $110 for 90 minutes, and $140 for a full two hours. It's our most popular service. The best value is in our combos \u2014 for example, a 60-minute body massage paired with a 60-minute head spa is $158 for two full hours."
   },
   {
+    q: "Do you offer facials?",
+    a: "Yes. We offer Clarifying, Microdermabrasion, Hydrating, and Barrier Repair facials at $148 for 60 minutes, and a Traditional Chinese Guasha Facial at $198 for 60 minutes. See our Treatment Menu above for the full list."
+  },
+  {
     q: "What does a body massage session include?",
     a: "A full-body therapeutic massage focused on the areas where tension builds up: back, neck, shoulders, arms, and legs. We use deep tissue techniques to release knots, ease chronic tightness, and improve circulation \u2014 all at a pressure level you choose. Sessions run 60 or 90 minutes, and most guests tell us the 90-minute session is worth it."
   },
