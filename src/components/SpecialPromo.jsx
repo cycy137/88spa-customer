@@ -10,6 +10,11 @@ const PROMO_IMAGES = {
   'special脚90': '/image/promo-foot-90.webp',
   'special脚80': '/image/promo-foot-80.webp',
   'special脚70': '/image/promo-foot-70.webp',
+  '净肤清洁护理': '/image/promo-facial-clarifying.webp',
+  '磨皮': '/image/promo-facial-microdermabrasion.webp',
+  '补水保湿护理': '/image/promo-facial-hydrating.webp',
+  '屏障修复护理': '/image/promo-facial-barrier-repair.webp',
+  '中式传统刮面部水疗护理': '/image/promo-facial-guasha.webp',
 };
  
 /**
@@ -17,8 +22,9 @@ const PROMO_IMAGES = {
  */
 export default function SpecialPromo({ onBookNowClick, activeServices = [] }) {
   
-  // 1. 自动从共享的数据流中捞取所有在 D1 数据库中标有特价、或者打上特价标签的项目
-  const promoItems = activeServices.filter(item => item.salePrice || item.isSpecial);
+  // 1. 主推区收录两类项目：限时优惠（salePrice / isSpecial，有优惠价）与主推标记（isFeatured，原价展示）。
+  // isFeatured 只控制显不显示在这里，不碰价格；真要打折再填 salePrice（原价记 price），两者独立。
+  const promoItems = activeServices.filter(item => item.salePrice || item.isSpecial || item.isFeatured);
  
   // 如果当前季节数据库里没有任何特价活动，组件自动保持优雅隐藏，不破坏页面整体留白感
   if (promoItems.length === 0) return null;
@@ -57,8 +63,10 @@ export default function SpecialPromo({ onBookNowClick, activeServices = [] }) {
             // 🌟【核心变换接头点】：在这里直接拦截并调用 Mapping，把 "special脚90" 转换成高奢名称
             const { displayName, displaySubtitle } = transformServiceData(item);
             
-            // 自动计算本次促销为您省下了多少美元
-            const saving = item.price - (item.salePrice || item.price);
+            // 是否真打折：salePrice 存在且低于原价才算（salePrice 为 0 表示免费，如 Aromatherapy）。
+            // 无折扣的主推项目不显示 SAVE 徽标与划线原价，改挂 NEW 徽标、按原价展示。
+            const hasSale = item.salePrice != null && item.salePrice < item.price;
+            const saving = hasSale ? item.price - item.salePrice : 0;
             const promoImage = PROMO_IMAGES[item.name];
             
             return (
@@ -86,9 +94,15 @@ export default function SpecialPromo({ onBookNowClick, activeServices = [] }) {
                 {/* 左侧：文字描述区 */}
                 <div className="flex-1 space-y-3 min-w-0">
                   <div className="flex items-center space-x-2">
-                    <span className="bg-red-500 text-white text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded">
-                      SAVE ${saving}
-                    </span>
+                    {hasSale ? (
+                      <span className="bg-red-500 text-white text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded">
+                        SAVE ${saving}
+                      </span>
+                    ) : (
+                      <span className="bg-spa-gold text-white text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded">
+                        NEW
+                      </span>
+                    )}
                     <span className="text-xs text-spa-gold tracking-wider font-medium uppercase">
                       {item.duration} Mins Treatment
                     </span>
@@ -108,12 +122,20 @@ export default function SpecialPromo({ onBookNowClick, activeServices = [] }) {
                 {/* 右侧：高对比度原价、特价对比与一键秒杀按钮区 */}
                 <div className="w-full sm:w-auto flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 border-spa-accent/40 pt-4 sm:pt-0 gap-4 flex-shrink-0">
                   <div className="text-left sm:text-right">
-                    <div className="text-xs text-spa-textMuted/60 line-through font-light leading-none mb-1">
-                      Reg. ${item.price}
-                    </div>
-                    <div className="text-3xl font-bold tracking-tight text-red-600 leading-none">
-                      ${item.salePrice || item.price}
-                    </div>
+                    {hasSale ? (
+                      <>
+                        <div className="text-xs text-spa-textMuted/60 line-through font-light leading-none mb-1">
+                          Reg. ${item.price}
+                        </div>
+                        <div className="text-3xl font-bold tracking-tight text-red-600 leading-none">
+                          ${item.salePrice}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-3xl font-bold tracking-tight text-spa-textDark leading-none">
+                        ${item.price}
+                      </div>
+                    )}
                   </div>
                   
                   <button

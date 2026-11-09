@@ -19,6 +19,26 @@ const FAQS = [
     a: "Body massage starts at $50 for 30 minutes, $80 for 60 minutes, $110 for 90 minutes, and $140 for a full two hours. It's our most popular service. The best value is in our combos \u2014 for example, a 60-minute body massage paired with a 60-minute head spa is $158 for two full hours."
   },
   {
+    q: "Do you offer facials?",
+    a: "Yes. We offer Clarifying, Microdermabrasion, Hydrating, and Barrier Repair facials at $148 for 60 minutes, and a Traditional Chinese Guasha Facial at $198 for 60 minutes. See our Treatment Menu above for the full list."
+  },
+  {
+    q: "What is a guasha facial?",
+    a: "A traditional Chinese guasha facial uses a smooth stone tool in gentle scraping strokes across the face to boost circulation and release facial tension. It runs 60 minutes and costs $198, our premium facial. Tell your therapist if you prefer lighter pressure."
+  },
+  {
+    q: "Which facial is right for my skin?",
+    a: "Pick by your main concern: Clarifying for congested or breakout-prone skin, Microdermabrasion for dull or uneven texture, Hydrating for dry or dehydrated skin, and Barrier Repair for sensitive or stressed skin. Not sure? Tell your therapist when you book and they will guide you."
+  },
+  {
+    q: "What is microdermabrasion?",
+    a: "Microdermabrasion is a gentle exfoliating treatment that polishes away dull surface skin to reveal a smoother, brighter complexion. Our 60-minute Microdermabrasion Facial costs $148."
+  },
+  {
+    q: "Can I get a facial if I have sensitive skin?",
+    a: "Yes. Our Barrier Repair Facial is designed for sensitive or stressed skin. It focuses on repairing the skin barrier and calming irritation. Mention your sensitivity when you book so your therapist can adjust the treatment to your comfort."
+  },
+  {
     q: "What does a body massage session include?",
     a: "A full-body therapeutic massage focused on the areas where tension builds up: back, neck, shoulders, arms, and legs. We use deep tissue techniques to release knots, ease chronic tightness, and improve circulation \u2014 all at a pressure level you choose. Sessions run 60 or 90 minutes, and most guests tell us the 90-minute session is worth it."
   },
