@@ -10,11 +10,11 @@ const PROMO_IMAGES = {
   'special脚90': '/image/promo-foot-90.webp',
   'special脚80': '/image/promo-foot-80.webp',
   'special脚70': '/image/promo-foot-70.webp',
-  // 面部新项目（主推卡片配图；刮痧图待补，届时再加 '中式传统刮面部水疗护理' 一项）
   '净肤清洁护理': '/image/promo-facial-clarifying.webp',
   '磨皮': '/image/promo-facial-microdermabrasion.webp',
   '补水保湿护理': '/image/promo-facial-hydrating.webp',
   '屏障修复护理': '/image/promo-facial-barrier-repair.webp',
+  '中式传统刮面部水疗护理': '/image/promo-facial-guasha.webp',
 };
  
 /**

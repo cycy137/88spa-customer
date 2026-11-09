@@ -27,8 +27,8 @@ export default function Services({ onBookNowClick }) {
     loadServices();
   }, []);
 
-  // 1. 分类 Tab 顺序：Combo、Body、Head、Foot、Facial，最后才是 All；按时长从短到长排序，时长相同时按价格排序
-  const categories = ['Combo', 'Full Body', 'Head', 'Foot', 'Facial', 'All'];
+  // 1. 分类 Tab 顺序：Combo、Facial、Body、Head、Foot，最后才是 All；按时长从短到长排序，时长相同时按价格排序
+  const categories = ['Combo', 'Facial', 'Full Body', 'Head', 'Foot', 'All'];
 
   // 2. 核心隔离逻辑 A：全量过滤掉属于“升级加购项（Add-ons）”的服务，不让它们在主菜单的大卡片里乱入
   const standardMainServices = services.filter(item => item.isAddon !== 1);
