@@ -1,31 +1,9 @@
 // src/components/Reviews.jsx
 import React from 'react';
+import { TESTIMONIALS } from '../data/testimonials.js';
 
 export default function Reviews() {
-  // 精选三条 Redmond 本地熟客的高分真实英文评价（带中文注释）
-  const testimonials = [
-    {
-      id: 1,
-      name: "Sarah M.",
-      location: "Redmond, WA",
-      rating: 5,
-      text: "The best head spa experience in the Eastside! The scalp analysis was eye-opening and the massage was so relaxing I fell asleep instantly. Will absolutely come back every month."
-    },
-    {
-      id: 2,
-      name: "David K.",
-      location: "Bellevue, WA",
-      rating: 5,
-      text: "Outstanding deep tissue massage. The therapists really understand muscle tension. Clean private rooms, easy parking, and very professional team. Highly recommend 88 Spa."
-    },
-    {
-      id: 3,
-      name: "Elena R.",
-      location: "Kirkland, WA",
-      rating: 5,
-      text: "Absolute heaven. The combination of the warm waterfall ring, aromatherapy, and shoulder massage completely melted my work week stress away. A hidden gem in Redmond!"
-    }
-  ];
+  const testimonials = TESTIMONIALS;
 
   return (
     <section id="reviews" className="py-24 bg-spa-accent/30 text-spa-textDark border-t border-spa-accent">
